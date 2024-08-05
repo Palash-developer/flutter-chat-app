@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 import 'package:typewritertext/typewritertext.dart';
 
@@ -34,18 +35,16 @@ class _AuthScreenState extends State<AuthScreen> {
           children: [
             Container(
               margin: const EdgeInsets.only(
-                top: 80,
+                top: 60,
                 bottom: 20,
                 left: 20,
                 right: 20,
               ),
               width: 200,
-              child: Image.asset(
-                'assets/images/chat-logo.png',
-              ),
+              child: Lottie.asset("assets/images/logo-chat.json"),
             ),
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
+              margin: const EdgeInsets.symmetric(horizontal: 16),
               width: MediaQuery.of(context).size.width,
               child: Align(
                 alignment: Alignment.center,
@@ -54,7 +53,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   style: GoogleFonts.eduNswActFoundation(
                     textStyle: Theme.of(context).textTheme.titleLarge!.copyWith(
                           color: Colors.white,
-                          fontSize: 40,
+                          fontSize: 60,
                         ),
                   ),
                   duration: const Duration(milliseconds: 200),
@@ -63,6 +62,12 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
             ),
             Card(
+              shadowColor: Theme.of(context).colorScheme.shadow,
+              color: Theme.of(context).colorScheme.surface,
+              elevation: 14,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
               margin: const EdgeInsets.all(20),
               child: SingleChildScrollView(
                 child: Padding(
@@ -115,12 +120,12 @@ class _AuthScreenState extends State<AuthScreen> {
                         const SizedBox(height: 12),
                         ElevatedButton(
                           onPressed: _submit,
-                          child: Text(
-                            _isLogin ? "Login" : "Signup",
-                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
                                 Theme.of(context).colorScheme.primaryContainer,
+                          ),
+                          child: Text(
+                            _isLogin ? "Login" : "Signup",
                           ),
                         ),
                         TextButton(
