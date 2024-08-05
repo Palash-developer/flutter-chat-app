@@ -22,10 +22,10 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ).copyWith(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 63, 17, 177),
+          seedColor: const Color.fromARGB(255, 197, 174, 255),
         ),
       ),
-      home: AuthScreen(),
+      home: const AuthScreen(),
     );
   }
 }
