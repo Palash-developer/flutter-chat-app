@@ -2,9 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lottie/lottie.dart';
-
 import 'package:typewritertext/typewritertext.dart';
+
+final _firebaseAuth = FirebaseAuth.instance;
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -18,10 +20,30 @@ class _AuthScreenState extends State<AuthScreen> {
   var _isLogin = true;
   var enteredEmail = "";
   var enteredPassword = "";
-  void _submit() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      log("Email: $enteredEmail, Password: $enteredPassword, Login: $_isLogin");
+  void _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    _formKey.currentState!.save();
+    log("Email: $enteredEmail, Password: $enteredPassword, Login: $_isLogin");
+    try {
+      if (_isLogin) {
+        final userCredentials = await _firebaseAuth.signInWithEmailAndPassword(
+            email: enteredEmail, password: enteredPassword);
+        log("userCredentials: $userCredentials");
+      } else {
+        final userCredentials =
+            await _firebaseAuth.createUserWithEmailAndPassword(
+                email: enteredEmail, password: enteredPassword);
+        log("userCredentials: $userCredentials");
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        //...
+      }
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? "Authentication Failed")),
+      );
     }
   }
 
@@ -53,7 +75,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   style: GoogleFonts.eduNswActFoundation(
                     textStyle: Theme.of(context).textTheme.titleLarge!.copyWith(
                           color: Colors.white,
-                          fontSize: 60,
+                          fontSize: 66,
                         ),
                   ),
                   duration: const Duration(milliseconds: 200),

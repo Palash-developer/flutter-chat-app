@@ -40,6 +40,8 @@ dependencies:
   typewritertext: ^3.0.8
   google_fonts: ^6.2.1
   lottie: ^3.1.2
+  firebase_storage: ^12.1.2
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
