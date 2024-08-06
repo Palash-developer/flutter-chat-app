@@ -38,9 +38,10 @@ class ChatScreen extends StatelessWidget {
                 },
               );
             },
-            icon: const Icon(
+            icon: Icon(
               CupertinoIcons.ellipsis_vertical,
               size: 26,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ],
