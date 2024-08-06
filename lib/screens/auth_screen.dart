@@ -30,7 +30,13 @@ class _AuthScreenState extends State<AuthScreen> {
   void _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    if (!_isLogin && uplodedImgFile == null) return;
+    if (!_isLogin && uplodedImgFile == null) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please select an image to continue")),
+      );
+      return;
+    }
 
     _formKey.currentState!.save();
 
