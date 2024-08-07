@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:typewritertext/typewritertext.dart';
@@ -22,6 +24,7 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
   var _isLogin = true;
+  var isSecurePassword = true;
   var enteredEmail = "";
   var enteredUserName = "";
   var enteredPassword = "";
@@ -151,7 +154,6 @@ class _AuthScreenState extends State<AuthScreen> {
                           textCapitalization: TextCapitalization.none,
                           validator: (value) {
                             final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
-
                             if (value == null || value.trim().isEmpty) {
                               return "Please enter an email address";
                             }
@@ -176,9 +178,22 @@ class _AuthScreenState extends State<AuthScreen> {
                             },
                           ),
                         TextFormField(
-                          decoration:
-                              const InputDecoration(labelText: "Password"),
-                          obscureText: true,
+                          decoration: InputDecoration(
+                            labelText: "Password",
+                            suffixIcon: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isSecurePassword = !isSecurePassword;
+                                });
+                              },
+                              child: Icon(
+                                isSecurePassword
+                                    ? CupertinoIcons.eye
+                                    : CupertinoIcons.eye_slash,
+                              ),
+                            ),
+                          ),
+                          obscureText: isSecurePassword,
                           validator: (value) {
                             final passwordRegex = RegExp(
                                 r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]).{8,12}$');
