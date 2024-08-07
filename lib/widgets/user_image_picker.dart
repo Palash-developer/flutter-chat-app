@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/services/img_service.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UserImagePicker extends StatefulWidget {
@@ -16,11 +17,7 @@ class UserImagePicker extends StatefulWidget {
 class _UserImagePickerState extends State<UserImagePicker> {
   File? pickedImgFile;
   void pickImage() async {
-    final pickedImg = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 50,
-      maxWidth: 150,
-    );
+    final pickedImg = await ImgService.pickImage();
     if (pickedImg == null) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
