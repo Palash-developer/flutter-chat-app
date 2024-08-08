@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -41,9 +39,6 @@ class ChatMessages extends StatelessWidget {
             final message = doc.data();
             final senderId = message['userId'];
             final receiverId = message['receiverId'];
-            log(senderId.toString());
-            log(receiverId.toString());
-            log(currentUserId.toString());
 
             // Check if the current user is either the sender or receiver
             return (senderId == currentUserId && receiverId == rUserId) ||
@@ -56,8 +51,6 @@ class ChatMessages extends StatelessWidget {
             );
           }
 
-          log(filteredMessages.first.data().toString());
-
           return ListView.builder(
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom + 20,
@@ -68,7 +61,7 @@ class ChatMessages extends StatelessWidget {
             itemCount: filteredMessages.length,
             itemBuilder: (ctx, index) {
               final message = filteredMessages[index].data();
-              log("msg:$message");
+
               final nextMsg = index + 1 < filteredMessages.length
                   ? filteredMessages[index + 1]
                   : null;

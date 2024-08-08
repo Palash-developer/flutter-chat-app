@@ -93,8 +93,14 @@ class MessageBubble extends StatelessWidget {
                   Container(
                     decoration: BoxDecoration(
                       color: isMe
-                          ? Colors.grey[300]
-                          : theme.colorScheme.secondary.withAlpha(200),
+                          ? Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.2)
+                          : Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.6),
                       // Only show the message bubble's "speaking edge" if first in
                       // the chain.
                       // Whether the "speaking edge" is on the left or right depends
@@ -128,6 +134,7 @@ class MessageBubble extends StatelessWidget {
                       style: TextStyle(
                         // Add a little line spacing to make the text look nicer
                         // when multilined.
+                        fontSize: 16,
                         height: 1.3,
                         color: isMe
                             ? Colors.black87
