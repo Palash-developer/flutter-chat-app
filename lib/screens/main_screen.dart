@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -145,36 +144,54 @@ class _MainScreenState extends State<MainScreen> {
             return user['email'] != currentUser?.email;
           }).toList();
 
-          return ListView.builder(
-            itemCount: users.length,
-            itemBuilder: (context, index) {
-              final user = users[index].data() as Map<String, dynamic>;
-              return InkWell(
-                onTap: () {
-                  final rUser = users[index];
-                  log(rUser.id.toString());
-                  Navigator.of(context).push(
-                    CupertinoPageRoute(
-                      builder: (ctx) => ChatScreen(
-                        user: user,
-                        rUserId: rUser.id,
+          return Stack(
+            children: [
+              Positioned(
+                bottom: 20,
+                right: 12,
+                child: FloatingActionButton(
+                  onPressed: () {},
+                  child: const Icon(
+                    CupertinoIcons.person_add,
+                    size: 30,
+                  ),
+                ),
+              ),
+              ListView.builder(
+                itemCount: users.length,
+                itemBuilder: (context, index) {
+                  final user = users[index].data() as Map<String, dynamic>;
+                  return InkWell(
+                    onTap: () {
+                      final rUser = users[index];
+                      Navigator.of(context).push(
+                        CupertinoPageRoute(
+                          builder: (ctx) => ChatScreen(
+                            user: user,
+                            rUserId: rUser.id,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage:
+                              NetworkImage(user['image_url'] ?? ''),
+                        ),
+                        title: Text(user['username'][0].toUpperCase() +
+                                user['username']
+                                    .split(".")
+                                    .first
+                                    .substring(1) ??
+                            'Annonymous'),
+                        subtitle: Text(user['email'] ?? 'No Email'),
                       ),
                     ),
                   );
                 },
-                child: Card(
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: NetworkImage(user['image_url'] ?? ''),
-                    ),
-                    title: Text(user['username'][0].toUpperCase() +
-                            user['username'].split(".").first.substring(1) ??
-                        'Annonymous'),
-                    subtitle: Text(user['email'] ?? 'No Email'),
-                  ),
-                ),
-              );
-            },
+              ),
+            ],
           );
         },
       ),
