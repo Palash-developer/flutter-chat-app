@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -57,7 +58,11 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chatter'),
+        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+        title: Text(
+          'Chatter',
+          style: TextStyle(color: Theme.of(context).colorScheme.surface),
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -85,7 +90,7 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(
               CupertinoIcons.settings,
               size: 26,
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.surface,
             ),
           ),
           IconButton(
@@ -118,7 +123,7 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(
               CupertinoIcons.ellipsis_vertical,
               size: 26,
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.surface,
             ),
           ),
         ],
@@ -146,20 +151,27 @@ class _MainScreenState extends State<MainScreen> {
               final user = users[index].data() as Map<String, dynamic>;
               return InkWell(
                 onTap: () {
+                  final rUser = users[index];
+                  log(rUser.id.toString());
                   Navigator.of(context).push(
                     CupertinoPageRoute(
-                      builder: (ctx) => ChatScreen(user: user),
+                      builder: (ctx) => ChatScreen(
+                        user: user,
+                        rUserId: rUser.id,
+                      ),
                     ),
                   );
                 },
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(user['image_url'] ?? ''),
+                child: Card(
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: NetworkImage(user['image_url'] ?? ''),
+                    ),
+                    title: Text(user['username'][0].toUpperCase() +
+                            user['username'].split(".").first.substring(1) ??
+                        'Annonymous'),
+                    subtitle: Text(user['email'] ?? 'No Email'),
                   ),
-                  title: Text(user['username'][0].toUpperCase() +
-                          user['username'].split(".").first.substring(1) ??
-                      'Annonymous'),
-                  subtitle: Text(user['email'] ?? 'No Email'),
                 ),
               );
             },

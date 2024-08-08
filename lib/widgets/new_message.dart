@@ -4,7 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class NewMessage extends StatefulWidget {
-  const NewMessage({super.key});
+  const NewMessage({super.key, required this.rUserId});
+
+  final rUserId;
 
   @override
   State<NewMessage> createState() => _NewMessageState();
@@ -37,6 +39,7 @@ class _NewMessageState extends State<NewMessage> {
         "text": enteredMessage,
         "createdAt": Timestamp.now(),
         "userId": user.uid,
+        "receiverId": widget.rUserId,
         "userName": userData.data()!["username"],
         "userImage": userData.data()!["image_url"],
       },
