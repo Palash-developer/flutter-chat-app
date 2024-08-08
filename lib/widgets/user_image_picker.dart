@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/services/img_service.dart';
-import 'package:image_picker/image_picker.dart';
 
 class UserImagePicker extends StatefulWidget {
   const UserImagePicker({super.key, required this.imagePickFn});

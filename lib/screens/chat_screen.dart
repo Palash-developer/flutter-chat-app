@@ -1,122 +1,43 @@
-import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/services/img_service.dart';
+import 'package:flutter_chat_app/widgets/chat_messages.dart';
+import 'package:flutter_chat_app/widgets/new_message.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  const ChatScreen({super.key, required this.user});
+  final Map<String, dynamic> user;
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  Future<void> uploadImage() async {
-    final pickedImg = await ImgService.pickImage();
-    if (pickedImg == null) {
-      return;
-    }
-    final filePath = File(pickedImg.path);
-    final userCredentials = FirebaseAuth.instance.currentUser;
-
-    try {
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child("user_images")
-          .child(userCredentials!.uid)
-          .child("${userCredentials.uid}.jpg");
-      await storageRef.putFile(filePath);
-      final imgURL = await storageRef.getDownloadURL();
-
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(userCredentials.uid)
-          .update({
-        "image_url": imgURL,
-      });
-      // Navigator.of(context).pop();
-    } catch (e) {
-      print(e);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final user = widget.user;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chatter'),
+        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+        title: Text(user['username'][0].toUpperCase() +
+                user['username'].split(".").first.substring(1) ??
+            'Annonymous'),
         actions: [
-          IconButton(
-            onPressed: () {
-              showCupertinoModalPopup(
-                  context: context,
-                  builder: (context) => CupertinoAlertDialog(
-                        title: const Text('Upload a new image'),
-                        actions: [
-                          CupertinoDialogAction(
-                            child: const Text('Cancel'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          CupertinoDialogAction(
-                            child: const Text('Upload Image'),
-                            onPressed: () {
-                              uploadImage();
-
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      ));
-            },
-            icon: Icon(
-              CupertinoIcons.settings,
-              size: 26,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              showCupertinoModalPopup(
-                context: context,
-                builder: (context) {
-                  return CupertinoAlertDialog(
-                    title: const Text('Confirmation'),
-                    content: const Text('Are you sure you want to logout?'),
-                    actions: [
-                      CupertinoDialogAction(
-                        child: const Text('Cancel'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      CupertinoDialogAction(
-                        child: const Text('Logout'),
-                        onPressed: () {
-                          FirebaseAuth.instance.signOut();
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-            icon: Icon(
-              CupertinoIcons.ellipsis_vertical,
-              size: 26,
-              color: Theme.of(context).colorScheme.primary,
+          Padding(
+            padding: const EdgeInsets.only(right: 20, bottom: 0.1),
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(user['image_url'] ?? ''),
+              radius: 26,
             ),
           ),
         ],
       ),
-      body: const Center(
-        child: Text("Logged in!"),
+      body: const Column(
+        children: [
+          Expanded(
+            child: ChatMessages(),
+          ),
+          NewMessage(),
+        ],
       ),
     );
   }
