@@ -90,6 +90,7 @@ class _GroupsMainScreenState extends State<GroupsMainScreen> {
                               ),
                             ),
                           ),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter a group name';

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/screens/group_chat_screen.dart';
 
 class GroupScreen extends StatefulWidget {
   const GroupScreen({super.key, required this.groupName});
@@ -21,11 +22,18 @@ class _GroupScreenState extends State<GroupScreen> {
   User? currentUser;
   bool _isLoading = true;
 
+  final groupMembers = [];
+
+  Map<String, bool> _checkedUsers = {};
+
   @override
   void initState() {
     super.initState();
-    currentUser = FirebaseAuth.instance.currentUser;
+    currentUser = FirebaseAuth.instance.currentUser!;
     _fetchUsers();
+    if (currentUser != null) {
+      _checkedUsers[currentUser!.uid] = true;
+    }
     _searchController.addListener(() {
       _filterUsers();
     });
@@ -43,7 +51,7 @@ class _GroupScreenState extends State<GroupScreen> {
           await FirebaseFirestore.instance.collection('users').get();
       setState(() {
         _allUsers = snapshot.docs.where((doc) {
-          final user = doc.data() as Map<String, dynamic>;
+          final user = doc.data();
           return user['email'] != currentUser?.email;
         }).toList();
         _filteredUsers = List.from(_allUsers);
@@ -68,11 +76,47 @@ class _GroupScreenState extends State<GroupScreen> {
     });
   }
 
+  void createGroup() async {
+    if (_checkedUsers.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select at least one user')),
+      );
+      return;
+    }
+    final user = FirebaseAuth.instance.currentUser!;
+
+    FirebaseFirestore.instance.collection("groups").add({
+      "groupName": widget.groupName,
+      "groupIcon": widget.groupName[0].toUpperCase(),
+      "admin": user.uid,
+      "members": _checkedUsers.keys.toList(),
+      "chatId": "",
+      "createdAt": Timestamp.now(),
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+        actions: [
+          TextButton(
+            onPressed: () {
+              createGroup();
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (ctx) => const GroupChatScreen(),
+                ),
+              );
+            },
+            child: Text(
+              "Create",
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.surface, fontSize: 18),
+            ),
+          ),
+        ],
         leading: IconButton(
           icon: Icon(
             CupertinoIcons.back,
@@ -84,7 +128,7 @@ class _GroupScreenState extends State<GroupScreen> {
           },
         ),
         title: Text(
-          'Create a new group',
+          widget.groupName,
           style: TextStyle(color: Theme.of(context).colorScheme.surface),
         ),
       ),
@@ -131,6 +175,21 @@ class _GroupScreenState extends State<GroupScreen> {
                               },
                               child: Card(
                                 child: ListTile(
+                                  onTap: () {
+                                    var addedUser =
+                                        _checkedUsers[_filteredUsers[index].id];
+                                    if (addedUser != null) {
+                                      setState(() {
+                                        _checkedUsers
+                                            .remove(_filteredUsers[index].id);
+                                      });
+                                      return;
+                                    }
+                                    setState(() {
+                                      _checkedUsers[_filteredUsers[index].id] =
+                                          true;
+                                    });
+                                  },
                                   leading: CircleAvatar(
                                     backgroundImage:
                                         NetworkImage(user['image_url'] ?? ''),
@@ -143,6 +202,12 @@ class _GroupScreenState extends State<GroupScreen> {
                                                   .substring(1) ??
                                           'Anonymous'),
                                   subtitle: Text(user['email'] ?? 'No Email'),
+                                  trailing: Icon(
+                                    _checkedUsers[_filteredUsers[index].id] !=
+                                            null
+                                        ? Icons.check
+                                        : null,
+                                  ),
                                 ),
                               ),
                             );
