@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/screens/chat_screen.dart';
+import 'package:flutter_chat_app/screens/groups_main_screen.dart';
 import 'package:flutter_chat_app/services/img_service.dart';
 
 class MainScreen extends StatefulWidget {
@@ -146,17 +147,6 @@ class _MainScreenState extends State<MainScreen> {
 
           return Stack(
             children: [
-              Positioned(
-                bottom: 20,
-                right: 12,
-                child: FloatingActionButton(
-                  onPressed: () {},
-                  child: const Icon(
-                    CupertinoIcons.person_add,
-                    size: 30,
-                  ),
-                ),
-              ),
               ListView.builder(
                 itemCount: users.length,
                 itemBuilder: (context, index) {
@@ -190,6 +180,24 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                   );
                 },
+              ),
+              Positioned(
+                bottom: 20,
+                right: 12,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    print("object");
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (ctx) => const GroupsMainScreen(),
+                      ),
+                    );
+                  },
+                  child: const Icon(
+                    CupertinoIcons.chat_bubble_2,
+                    size: 30,
+                  ),
+                ),
               ),
             ],
           );
