@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/screens/chat_screen.dart';
+import 'package:flutter_chat_app/screens/group_chat_screen.dart';
 import 'package:flutter_chat_app/screens/groups_main_screen.dart';
 import 'package:flutter_chat_app/services/img_service.dart';
 
@@ -64,6 +65,19 @@ class _MainScreenState extends State<MainScreen> {
           style: TextStyle(color: Theme.of(context).colorScheme.surface),
         ),
         actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (ctx) => const GroupChatScreen(),
+                  ),
+                );
+              },
+              icon: Icon(
+                CupertinoIcons.person_2_alt,
+                size: 28,
+                color: Theme.of(context).colorScheme.surface,
+              )),
           IconButton(
             onPressed: () {
               showCupertinoModalPopup(
@@ -136,7 +150,7 @@ class _MainScreenState extends State<MainScreen> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text('No users found'));
+            return const Center(child: Text('No users found!'));
           }
 
           final users = snapshot.data!.docs.where((doc) {
