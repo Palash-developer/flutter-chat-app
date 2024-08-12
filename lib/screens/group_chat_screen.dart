@@ -66,7 +66,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
           return ListView.builder(
             itemCount: groups.length,
             itemBuilder: (context, index) {
-              final group = groups[index].data() as Map<String, dynamic>;
+              final group = groups[index];
+              String groupId = group.id;
               return InkWell(
                 onTap: () {},
                 child: Card(
@@ -90,10 +91,12 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                     ),
                     title: Text(group['groupName']),
                     onTap: () {
+                      log("message: $groupId");
                       Navigator.of(context).push(
                         CupertinoPageRoute(
-                          builder: (ctx) =>
-                              GroupChatMsgScreen(groupName: group),
+                          builder: (ctx) => GroupChatMsgScreen(
+                              groupName: group['groupName'].toString(),
+                              groupId: groupId),
                         ),
                       );
                     },

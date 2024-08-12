@@ -93,6 +93,19 @@ class _GroupScreenState extends State<GroupScreen> {
       "chatId": "",
       "createdAt": Timestamp.now(),
     });
+
+    //
+    final doc = await FirebaseFirestore.instance
+        .collection("groups")
+        .where("admin", isEqualTo: user.uid)
+        .get();
+    final chatId = doc.docs.first.id;
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(user.uid)
+        .update({"chatId": chatId});
+    final groupId = FirebaseFirestore.instance.collection("groups").doc().id;
+    log("message: $groupId");
   }
 
   @override
