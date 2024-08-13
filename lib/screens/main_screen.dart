@@ -218,7 +218,6 @@ class _MainScreenState extends State<MainScreen> {
                 right: 12,
                 child: FloatingActionButton(
                   onPressed: () {
-                    print("object");
                     Navigator.of(context).push(
                       CupertinoPageRoute(
                         builder: (ctx) => const GroupsMainScreen(),
