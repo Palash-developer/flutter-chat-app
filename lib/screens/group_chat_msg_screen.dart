@@ -200,8 +200,7 @@ class _GroupChatMsgScreenState extends State<GroupChatMsgScreen> {
                     itemBuilder: (ctx, index) {
                       final message = chatDocs[index]['text'];
                       final senderId = chatDocs[index]['senderId'];
-                      final userEmail =
-                          chatDocs[index]['senderName'].split('@')[0];
+                      final userEmail = chatDocs[index]['senderName'];
 
                       return GroupMessageBubble(
                         isMe:

@@ -116,6 +116,9 @@ class _GroupScreenState extends State<GroupScreen> {
           TextButton(
             onPressed: () {
               createGroup();
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+
               Navigator.of(context).push(
                 CupertinoPageRoute(
                   builder: (ctx) => const GroupChatScreen(),
