@@ -1,11 +1,12 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/screens/auth_screen.dart';
 import 'package:flutter_chat_app/screens/chat_screen.dart';
 import 'package:flutter_chat_app/screens/group_chat_screen.dart';
 import 'package:flutter_chat_app/screens/groups_main_screen.dart';
@@ -50,10 +51,19 @@ class _MainScreenState extends State<MainScreen> {
 
   User? currentUser;
 
+  void setupPushNotification() async {
+    final fcm = FirebaseMessaging.instance;
+    await fcm.requestPermission();
+    final token = await fcm.getToken();
+    // log(token.toString());
+    fcm.subscribeToTopic('chat');
+  }
+
   @override
   void initState() {
     super.initState();
     currentUser = FirebaseAuth.instance.currentUser;
+    setupPushNotification();
   }
 
   @override
