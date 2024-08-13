@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/screens/auth_screen.dart';
 import 'package:flutter_chat_app/screens/chat_screen.dart';
 import 'package:flutter_chat_app/screens/group_chat_screen.dart';
 import 'package:flutter_chat_app/screens/groups_main_screen.dart';
@@ -60,6 +61,13 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+        leading: SizedBox(
+          child: Icon(
+            CupertinoIcons.home,
+            color: Theme.of(context).colorScheme.surface,
+            size: 30,
+          ),
+        ),
         title: Text(
           'Chatter',
           style: TextStyle(color: Theme.of(context).colorScheme.surface),

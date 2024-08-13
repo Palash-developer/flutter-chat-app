@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -74,17 +75,20 @@ class _AuthScreenState extends State<AuthScreen> {
         });
       }
     } on FirebaseAuthException catch (e) {
+      var message = "Authentication Failed";
       if (e.code == 'weak-password') {
-        //...
+        message = "The password is too weak.";
+      } else if (e.code == 'email-already-in-use') {
+        message = "The email is already in use.";
       }
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message ?? "Authentication Failed")),
       );
-      setState(() {
-        _isAuthenticating = false;
-      });
     }
+    setState(() {
+      _isAuthenticating = false;
+    });
   }
 
   @override

@@ -178,8 +178,6 @@ class _GroupChatMsgScreenState extends State<GroupChatMsgScreen> {
                     .orderBy('createdAt', descending: true)
                     .snapshots(),
                 builder: (ctx, chatSnapshot) {
-                  final chatDocs = chatSnapshot.data!.docs;
-
                   if (chatSnapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
@@ -194,6 +192,7 @@ class _GroupChatMsgScreenState extends State<GroupChatMsgScreen> {
                       chatSnapshot.data!.docs.isEmpty) {
                     return const Center(child: Text("No messages yet."));
                   }
+                  final chatDocs = chatSnapshot.data!.docs;
 
                   return ListView.builder(
                     reverse: true,
@@ -201,12 +200,15 @@ class _GroupChatMsgScreenState extends State<GroupChatMsgScreen> {
                     itemBuilder: (ctx, index) {
                       final message = chatDocs[index]['text'];
                       final senderId = chatDocs[index]['senderId'];
+                      final userEmail =
+                          chatDocs[index]['senderName'][0].toUpperCase();
 
                       return GroupMessageBubble(
                         isMe:
                             senderId == FirebaseAuth.instance.currentUser!.uid,
                         message: message,
                         userId: senderId,
+                        userEmail: userEmail,
                       );
                     },
                   );
