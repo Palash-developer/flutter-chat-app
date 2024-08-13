@@ -201,7 +201,7 @@ class _GroupChatMsgScreenState extends State<GroupChatMsgScreen> {
                       final message = chatDocs[index]['text'];
                       final senderId = chatDocs[index]['senderId'];
                       final userEmail =
-                          chatDocs[index]['senderName'][0].toUpperCase();
+                          chatDocs[index]['senderName'].split('@')[0];
 
                       return GroupMessageBubble(
                         isMe:
