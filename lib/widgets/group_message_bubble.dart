@@ -16,51 +16,103 @@
 
 //   @override
 //   Widget build(BuildContext context) {
+//     final theme = Theme.of(context);
+
 //     return Padding(
-//       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-//       child: Row(
-//         mainAxisAlignment:
-//             isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+//       padding: const EdgeInsets.all(8.0),
+//       child: Stack(
 //         children: [
-//           if (!isMe) ...[
-//             CircleAvatar(
-//               radius: 23,
-//               child: Text(
-//                 userEmail[0]
-//                     .toUpperCase(), // Display the first letter of the userId
-//                 style:
-//                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-//               ),
-//             ),
-//             const SizedBox(width: 8),
-//           ],
-//           Flexible(
-//             child: Container(
-//               margin: const EdgeInsets.only(bottom: 6),
-//               decoration: BoxDecoration(
-//                 color: isMe
-//                     ? Colors.grey[300]
-//                     : Theme.of(context).colorScheme.secondary.withOpacity(0.7),
-//                 borderRadius: BorderRadius.only(
-//                   topLeft: const Radius.circular(12),
-//                   topRight: const Radius.circular(12),
-//                   bottomLeft: isMe
-//                       ? const Radius.circular(12)
-//                       : const Radius.circular(0),
-//                   bottomRight: isMe
-//                       ? const Radius.circular(0)
-//                       : const Radius.circular(12),
+//           !isMe
+//               ? Positioned(
+//                   top: 0,
+//                   left: 0,
+//                   child: CircleAvatar(
+//                     radius: 23,
+//                     backgroundColor: theme.colorScheme.primary.withAlpha(180),
+//                     child: Text(
+//                       userEmail[0].toUpperCase(),
+//                       style: const TextStyle(
+//                         fontWeight: FontWeight.bold,
+//                         fontSize: 24,
+//                         color: Colors.white,
+//                       ),
+//                     ),
+//                   ),
+//                 )
+//               : Positioned(
+//                   top: 0,
+//                   right: 0,
+//                   child: CircleAvatar(
+//                     radius: 23,
+//                     backgroundColor: theme.colorScheme.primary.withAlpha(180),
+//                     child: Text(
+//                       userEmail[0].toUpperCase(),
+//                       style: const TextStyle(
+//                         fontWeight: FontWeight.bold,
+//                         fontSize: 24,
+//                         color: Colors.white,
+//                       ),
+//                     ),
+//                   ),
 //                 ),
-//               ),
-//               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-//               child: Text(
-//                 message,
-//                 style: TextStyle(
-//                   color: isMe
-//                       ? Colors.black
-//                       : Theme.of(context).textTheme.bodyMedium!.color,
+//           Padding(
+//             padding: const EdgeInsets.symmetric(horizontal: 46),
+//             child: Row(
+//               mainAxisAlignment:
+//                   isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+//               children: [
+//                 Column(
+//                   crossAxisAlignment:
+//                       isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+//                   children: [
+//                     Padding(
+//                       padding: const EdgeInsets.only(left: 13, right: 13),
+//                       child: Text(
+//                         userEmail[0].toUpperCase() + userEmail.substring(1),
+//                         style: const TextStyle(
+//                           fontWeight: FontWeight.bold,
+//                           color: Colors.black87,
+//                         ),
+//                       ),
+//                     ),
+//                     Container(
+//                       decoration: BoxDecoration(
+//                         color: isMe
+//                             ? theme.colorScheme.primary.withOpacity(0.2)
+//                             : theme.colorScheme.secondary.withOpacity(0.6),
+//                         borderRadius: BorderRadius.only(
+//                           topLeft:
+//                               isMe ? const Radius.circular(12) : Radius.zero,
+//                           topRight:
+//                               !isMe ? const Radius.circular(12) : Radius.zero,
+//                           bottomLeft: const Radius.circular(12),
+//                           bottomRight: const Radius.circular(12),
+//                         ),
+//                       ),
+//                       constraints: const BoxConstraints(maxWidth: 200),
+//                       padding: const EdgeInsets.symmetric(
+//                         vertical: 10,
+//                         horizontal: 14,
+//                       ),
+//                       margin: const EdgeInsets.symmetric(
+//                         vertical: 4,
+//                         horizontal: 12,
+//                       ),
+//                       child: Text(
+//                         message,
+//                         style: TextStyle(
+//                           fontSize: 16,
+//                           height: 1.3,
+//                           color: isMe
+//                               ? Colors.black87
+//                               : theme.colorScheme.onSecondary,
+//                         ),
+//                         softWrap: true,
+//                       ),
+//                     ),
+//                   ],
 //                 ),
-//               ),
+//               ],
 //             ),
 //           ),
 //         ],
@@ -69,11 +121,10 @@
 //   }
 // }
 
-import 'dart:developer';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class GroupMessageBubble extends StatelessWidget {
+class GroupMessageBubble extends StatefulWidget {
   final String message;
   final bool isMe;
   final String userId;
@@ -88,6 +139,46 @@ class GroupMessageBubble extends StatelessWidget {
   });
 
   @override
+  State<GroupMessageBubble> createState() => _GroupMessageBubbleState();
+}
+
+class _GroupMessageBubbleState extends State<GroupMessageBubble> {
+  String displayName = 'Loading...';
+  String imageUrl = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: widget.userEmail)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final userData =
+            querySnapshot.docs.first.data() as Map<String, dynamic>;
+        setState(() {
+          displayName = userData['username'] ?? 'Unknown';
+          imageUrl = userData['image_url'] ?? '';
+        });
+      } else {
+        setState(() {
+          displayName = 'User not found';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        displayName = 'Error loading user';
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
@@ -95,53 +186,42 @@ class GroupMessageBubble extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Stack(
         children: [
-          !isMe
-              ? Positioned(
-                  top: 0,
-                  left: 0,
-                  child: CircleAvatar(
-                    radius: 23,
-                    backgroundColor: theme.colorScheme.primary.withAlpha(180),
-                    child: Text(
-                      userEmail[0].toUpperCase(),
+          Positioned(
+            top: 0,
+            left: widget.isMe ? null : 0,
+            right: widget.isMe ? 0 : null,
+            child: CircleAvatar(
+              radius: 23,
+              backgroundColor: theme.colorScheme.primary.withAlpha(180),
+              backgroundImage:
+                  imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
+              child: imageUrl.isEmpty
+                  ? Text(
+                      displayName[0].toUpperCase(),
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 24,
                         color: Colors.white,
                       ),
-                    ),
-                  ),
-                )
-              : Positioned(
-                  top: 0,
-                  right: 0,
-                  child: CircleAvatar(
-                    radius: 23,
-                    backgroundColor: theme.colorScheme.primary.withAlpha(180),
-                    child: Text(
-                      userEmail[0].toUpperCase(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
+                    )
+                  : null,
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 46),
             child: Row(
               mainAxisAlignment:
-                  isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+                  widget.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
               children: [
                 Column(
-                  crossAxisAlignment:
-                      isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                  crossAxisAlignment: widget.isMe
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 13, right: 13),
                       child: Text(
-                        userEmail[0].toUpperCase() + userEmail.substring(1),
+                        displayName,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
@@ -150,14 +230,16 @@ class GroupMessageBubble extends StatelessWidget {
                     ),
                     Container(
                       decoration: BoxDecoration(
-                        color: isMe
+                        color: widget.isMe
                             ? theme.colorScheme.primary.withOpacity(0.2)
                             : theme.colorScheme.secondary.withOpacity(0.6),
                         borderRadius: BorderRadius.only(
-                          topLeft:
-                              isMe ? const Radius.circular(12) : Radius.zero,
-                          topRight:
-                              !isMe ? const Radius.circular(12) : Radius.zero,
+                          topLeft: widget.isMe
+                              ? const Radius.circular(12)
+                              : Radius.zero,
+                          topRight: !widget.isMe
+                              ? const Radius.circular(12)
+                              : Radius.zero,
                           bottomLeft: const Radius.circular(12),
                           bottomRight: const Radius.circular(12),
                         ),
@@ -172,11 +254,11 @@ class GroupMessageBubble extends StatelessWidget {
                         horizontal: 12,
                       ),
                       child: Text(
-                        message,
+                        widget.message,
                         style: TextStyle(
                           fontSize: 16,
                           height: 1.3,
-                          color: isMe
+                          color: widget.isMe
                               ? Colors.black87
                               : theme.colorScheme.onSecondary,
                         ),
