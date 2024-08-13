@@ -1,19 +1,24 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 class GroupMessageBubble extends StatelessWidget {
   final String message;
   final bool isMe;
   final String userId;
+  final String userEmail;
 
   const GroupMessageBubble({
     super.key,
     required this.message,
     required this.isMe,
     required this.userId,
+    required this.userEmail,
   });
 
   @override
   Widget build(BuildContext context) {
+    // log("userId: ${userId}");
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       child: Row(

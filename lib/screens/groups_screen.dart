@@ -90,7 +90,6 @@ class _GroupScreenState extends State<GroupScreen> {
       "groupIcon": widget.groupName[0].toUpperCase(),
       "admin": user.uid,
       "members": _checkedUsers.keys.toList(),
-      "chatId": "",
       "createdAt": Timestamp.now(),
     });
 

@@ -145,6 +145,7 @@ class _NewGroupMessageState extends State<NewGroupMessage> {
           'text': enteredMessage,
           'createdAt': Timestamp.now(),
           'senderId': FirebaseAuth.instance.currentUser?.uid,
+          'senderName': FirebaseAuth.instance.currentUser?.email,
         };
 
         // Adding the message to the messages subcollection of the current group
