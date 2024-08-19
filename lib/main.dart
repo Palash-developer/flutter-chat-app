@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/screens/main_screen.dart';
+import 'package:flutter_chat_app/utils/secrets.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,6 +16,16 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Initialize OneSignal
+  // OneSignal.initialize(Secrets.oneSignalAppId);
+  // OneSignal.User.pushSubscription.addObserver((state) {
+  //   log(OneSignal.User.pushSubscription.optedIn as String);
+  //   log(OneSignal.User.pushSubscription.id as String);
+  //   log(OneSignal.User.pushSubscription.token as String);
+  //   log(state.current.jsonRepresentation());
+  // });
+
   runApp(const MyApp());
 }
 
@@ -20,7 +34,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'FlutterChat',
+      title: 'Chatter',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
