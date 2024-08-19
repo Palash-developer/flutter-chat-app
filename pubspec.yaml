@@ -44,6 +44,7 @@ dependencies:
   image_picker: ^1.1.2
   cloud_firestore: ^5.2.0
   firebase_messaging: ^15.0.4
+  onesignal_flutter: ^5.2.3
 
 dev_dependencies:
   flutter_test:
